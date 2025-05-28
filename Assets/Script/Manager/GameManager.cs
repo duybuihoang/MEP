@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviour
 
 
     [Header("Game Settings")]
-    public float gameSpeed = 5f;
+    public float gameSpeed = 1f;
     public float tileSpawnInterval = 1f;
     public int lanes = 4;
 
@@ -25,10 +25,10 @@ public class GameManager : MonoBehaviour
 
     private bool gameOver = false;
     public bool IsGameOver => gameOver;
-
-    private TileSpawner tileSpawner;
+    [SerializeField] private GameObject GameOverPanel;
 
     public float ScreenWorldWidth => Camera.main.orthographicSize * 2f * Camera.main.aspect;
+
 
     private void Awake()
     {
@@ -44,24 +44,18 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        tileSpawner = FindObjectOfType<TileSpawner>();
         float screenWorldWidth = Camera.main.orthographicSize * 2f * Camera.main.aspect;
 
-        tileSpawner.Init(lanes, screenWorldWidth);
-    }
-    public void GameOver()
-    {
-        if (gameOver) return;
-
-        gameOver = true;
-        Time.timeScale = 0f;
+        TileSpawner.Instance.Init(lanes, screenWorldWidth);
     }
     public void TriggerGameOver()
     {
         if (gameOver) return;
 
         gameOver = true;
+        GameOverPanel.SetActive(true);
         Time.timeScale = 0f;
+
         Debug.Log($"Game Over!");
     }
 
@@ -73,7 +67,7 @@ public class GameManager : MonoBehaviour
         combo = points > 0 ? combo + 1 : 0;
 
         // TODO: UPDATE UI
-        Debug.Log($"Score: {score}, Combo: {combo}");
+        //Debug.Log($"Score: {score}, Combo: {combo}");
     }
 
 }

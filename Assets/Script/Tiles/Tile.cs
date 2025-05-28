@@ -1,16 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
 public class Tile : MonoBehaviour
 {
     [Header("Movement")]
-    [SerializeField] private float fallSpeed = 5f;
+    [SerializeField] private float fallSpeed;
 
     [Header("Timing Windows")]
     [SerializeField] private float perfectWindow = 0.3f;
-    [SerializeField] private float goodWindow = 0.5f;
+    [SerializeField] private float goodWindow = 0.6f;
 
     private SpriteRenderer spriteRenderer;
     private Color originalColor;
@@ -19,13 +18,19 @@ public class Tile : MonoBehaviour
 
     private float targetY = -2.5f;
 
+    private void OnDisable()
+    {
+        hasBeenTapped = false;
+    }
+
     private void Start()
     {
         SetupComponents();
         ScaleTolane();
         fallSpeed = GameManager.Instance.gameSpeed;
-
     }
+
+
     private void SetupComponents()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -54,28 +59,6 @@ public class Tile : MonoBehaviour
         MoveTile();
         CheckGameOverBoundary();
 
-        Debug.DrawLine(new Vector3(
-            transform.position.x - spriteRenderer.bounds.size.x / 2,
-            transform.position.y + perfectWindow,
-            0),
-            new Vector3(
-            transform.position.x + spriteRenderer.bounds.size.x / 2,
-            transform.position.y + perfectWindow,
-            0),
-            Color.green
-            );
-
-        Debug.DrawLine(new Vector3(
-            transform.position.x - spriteRenderer.bounds.size.x / 2,
-            transform.position.y - perfectWindow,
-            0),
-            new Vector3(
-            transform.position.x + spriteRenderer.bounds.size.x / 2,
-            transform.position.y - perfectWindow,
-            0),
-            Color.green
-            );
-
     }
 
     private void MoveTile() {
@@ -88,28 +71,39 @@ public class Tile : MonoBehaviour
 
         hasBeenTapped = true;
         EvaluateHit(tapPosition);
-        Destroy(gameObject, 0.1f);
+        //Destroy(gameObject, 0.1f);
+        TileSpawner.Instance.AddToPool(gameObject);
     }
 
-    void EvaluateHit(Vector3 tapPosition)
+    private void EvaluateHit(Vector3 tapPosition)
     {
-        float distanceToTarget = Mathf.Abs(transform.position.y - targetY);
+        float distanceToTarget = Vector3.Distance(transform.position, new Vector3 (transform.position.x, targetY, transform.position.z));
 
         if (distanceToTarget <= perfectWindow)
         {
             GameManager.Instance.AddScore(GameManager.Instance.perfectScore);
+            CreateFloatingText("PERFECT!", Color.green);
+            Debug.Log("PERFECT: " + distanceToTarget);
+
         }
         else if (distanceToTarget <= goodWindow)
         {
             GameManager.Instance.AddScore(GameManager.Instance.goodScore);
+            CreateFloatingText("GOOD!", Color.yellow);
+
+            Debug.Log("GOOD: " + distanceToTarget);
+
         }
         else
         {
             GameManager.Instance.AddScore(GameManager.Instance.missScore);
+            CreateFloatingText("MISS!", Color.red);
+            Debug.Log("MISS: " + distanceToTarget);
+
         }
     }
 
-    void CheckGameOverBoundary()
+    private void CheckGameOverBoundary()
     {
         float screenBottomY = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, 0)).y;
         float tileYSize = spriteRenderer.bounds.size.y;
@@ -119,5 +113,21 @@ public class Tile : MonoBehaviour
         {
             GameManager.Instance.TriggerGameOver();
         }
+    }
+
+    private void CreateFloatingText(string text, Color color)
+    {
+        GameObject floatingText = new GameObject("FloatingText");
+        floatingText.transform.position = transform.position + Vector3.up * 0.5f;
+
+        TextMesh tm = floatingText.AddComponent<TextMesh>();
+        tm.text = text;
+        tm.color = color;
+        tm.fontSize = 4;
+        tm.anchor = TextAnchor.MiddleCenter;
+
+        // Animate floating text
+        FloatingText ft = floatingText.AddComponent<FloatingText>();
+        ft.Setup(1f, Vector3.up * 2f);
     }
 }

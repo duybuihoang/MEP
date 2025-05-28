@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 906509913629334058}
   - component: {fileID: 906509913629334057}
   - component: {fileID: 906509913629334060}
-  m_Layer: 3
+  m_Layer: 6
   m_Name: Tile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -100,7 +100,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fallSpeed: 5
   perfectWindow: 0.3
-  goodWindow: 0.5
+  goodWindow: 0.9
 --- !u!61 &906509913629334060
 BoxCollider2D:
   m_ObjectHideFlags: 0

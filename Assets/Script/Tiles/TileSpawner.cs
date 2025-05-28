@@ -6,16 +6,40 @@ using UnityEngine;
 public class TileSpawner : MonoBehaviour
 {
     public GameObject tilePrefab;
+    private Queue<GameObject> availableTiles = new Queue<GameObject>();
+
+
     public List<Vector3> spawnPoints;
     public float baseSpawnRate = 1f;
 
     private float nextSpawnTime;
     private float currentSpawnRate;
 
+    public static TileSpawner Instance;
+    private void Awake()
+    {
+        Instance = this;
+        GrowPool();
+    }
     private void Start()
     {
         currentSpawnRate = baseSpawnRate;
         nextSpawnTime = Time.time + (1 / currentSpawnRate);
+    }
+
+    private void GrowPool()
+    {
+        for (int i = 0; i < 10; i++)
+        {
+            var instanceToAdd = Instantiate(tilePrefab);
+            instanceToAdd.transform.SetParent(transform);
+            AddToPool(instanceToAdd);
+        }
+    }
+    public void AddToPool(GameObject instance)
+    {
+        instance.SetActive(false);
+        availableTiles.Enqueue(instance);
     }
 
     private void Update()
@@ -29,6 +53,17 @@ public class TileSpawner : MonoBehaviour
         }
     }
 
+    public GameObject GetFromPool()
+    {
+        if (availableTiles.Count == 0)
+        {
+            GrowPool();
+        }
+        var instance = availableTiles.Dequeue();
+        instance.SetActive(true);
+        return instance;
+    }
+
     void SpawnTile()
     {
         if (spawnPoints.Count == 0) return;
@@ -36,7 +71,8 @@ public class TileSpawner : MonoBehaviour
         int randomLane = Random.Range(0, spawnPoints.Count);
         Vector3 spawnPoint = spawnPoints[randomLane];
 
-        GameObject newTile = Instantiate(tilePrefab, spawnPoint, Quaternion.identity);
+        GameObject newTile = GetFromPool();
+        newTile.transform.position = spawnPoint;
     }
     public void Init(int lanes, float screenWidth)
     {
