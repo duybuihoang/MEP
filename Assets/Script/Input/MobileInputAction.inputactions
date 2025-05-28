@@ -6,13 +6,22 @@
             "id": "7bdeec9a-7098-4d94-bfab-facb8aa6310c",
             "actions": [
                 {
-                    "name": "tap",
+                    "name": "Tap",
                     "type": "Button",
                     "id": "72ac7236-f8b1-498f-973d-51721878c7d0",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Position",
+                    "type": "Value",
+                    "id": "9580578e-2ca3-4895-93f7-821835c3c89d",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -23,7 +32,18 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "tap",
+                    "action": "Tap",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "af899cd0-405b-4b09-b5c6-1aeb4b1d5db0",
+                    "path": "<Touchscreen>/position",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Position",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
