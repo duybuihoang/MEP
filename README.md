@@ -19,5 +19,6 @@
 ### 🧩 UI System
 - Real-time:
   - **Score display**
+  - **Windows display**
   - **Combo counter**
   - **Game Over screen**
