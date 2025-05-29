@@ -38,19 +38,9 @@ public class TileSpawner : MonoBehaviour
     }
     public void AddToPool(GameObject instance)
     {
+        instance.gameObject.transform.position = new Vector3(-10f, -10f, 0);
         instance.SetActive(false);
         availableTiles.Enqueue(instance);
-    }
-
-    private void Update()
-    {
-        if (GameManager.Instance.IsGameOver) return;
-
-        if (Time.time >= nextSpawnTime)
-        {
-            SpawnTile();
-            nextSpawnTime = Time.time + (1f / currentSpawnRate) + Random.Range(-0.2f, 0.2f);
-        }
     }
 
     public GameObject GetFromPool()
@@ -64,15 +54,12 @@ public class TileSpawner : MonoBehaviour
         return instance;
     }
 
-    void SpawnTile()
+    public void SpawnTile(int lane)
     {
         if (spawnPoints.Count == 0) return;
 
-        int randomLane = Random.Range(0, spawnPoints.Count);
-        Vector3 spawnPoint = spawnPoints[randomLane];
-
         GameObject newTile = GetFromPool();
-        newTile.transform.position = spawnPoint;
+        newTile.transform.position = spawnPoints[lane];
     }
     public void Init(int lanes, float screenWidth)
     {
@@ -89,11 +76,13 @@ public class TileSpawner : MonoBehaviour
 
         float startX = -screenWidth * 0.5f + laneWidth * 0.5f;
 
+        float spriteWidth = tilePrefab.GetComponent<SpriteRenderer>().bounds.size.y;
+
 
         for (int i = 0; i < lanes; i++)
         {
             float xPos = startX + (i * laneWidth);
-            spawnPoints.Add(new Vector3(xPos, topY, 0f));
+            spawnPoints.Add(new Vector3(xPos, topY + spriteWidth/2, 0f));
             Debug.DrawLine(new Vector3(xPos, topY, 0f), new Vector3(xPos, topY - 100, 0f), Color.white, 100);
         }
     }

@@ -24,10 +24,9 @@ public class FloatingText : MonoBehaviour
     {
         float progress = 1f - (duration / 1f);
 
-        // Move upward
-        //transform.position = Vector3.Lerp(startPos, startPos + targetOffset, progress);
+        transform.position = Vector3.Lerp(startPos, startPos + targetOffset, progress);
 
-        // Fade out
+
         if (text != null)
         {
             Color color = text.color;

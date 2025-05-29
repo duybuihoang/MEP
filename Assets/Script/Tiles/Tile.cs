@@ -1,11 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.ShaderGraph.Serialization;
 using UnityEngine;
 
 public class Tile : MonoBehaviour
 {
     [Header("Movement")]
-    [SerializeField] private float fallSpeed;
+     private float fallSpeed;
 
     [Header("Timing Windows")]
     [SerializeField] private float perfectWindow = 0.3f;
@@ -18,13 +19,19 @@ public class Tile : MonoBehaviour
 
     private float targetY = -2.5f;
 
-    private void OnDisable()
+    private void OnEnable()
     {
         hasBeenTapped = false;
+    }
+    private void OnDisable()
+    {
+        hasBeenTapped = true;
     }
 
     private void Start()
     {
+        fallSpeed = GameManager.Instance.gameSpeed;
+
         SetupComponents();
         ScaleTolane();
         fallSpeed = GameManager.Instance.gameSpeed;
@@ -71,7 +78,6 @@ public class Tile : MonoBehaviour
 
         hasBeenTapped = true;
         EvaluateHit(tapPosition);
-        //Destroy(gameObject, 0.1f);
         TileSpawner.Instance.AddToPool(gameObject);
     }
 
@@ -83,22 +89,27 @@ public class Tile : MonoBehaviour
         {
             GameManager.Instance.AddScore(GameManager.Instance.perfectScore);
             CreateFloatingText("PERFECT!", Color.green);
-            Debug.Log("PERFECT: " + distanceToTarget);
+            ScoreUI.Instance.SetWindowsUI("PERFECT!", Color.green);
+            ReactiveBG.Instance.SetTransparency(1);
+
 
         }
         else if (distanceToTarget <= goodWindow)
         {
             GameManager.Instance.AddScore(GameManager.Instance.goodScore);
             CreateFloatingText("GOOD!", Color.yellow);
-
-            Debug.Log("GOOD: " + distanceToTarget);
+            ScoreUI.Instance.SetWindowsUI("GOOD", Color.yellow);
+            ReactiveBG.Instance.SetTransparency(1);
 
         }
         else
         {
             GameManager.Instance.AddScore(GameManager.Instance.missScore);
             CreateFloatingText("MISS!", Color.red);
-            Debug.Log("MISS: " + distanceToTarget);
+            ScoreUI.Instance.SetWindowsUI("MISS", Color.red);
+            ReactiveBG.Instance.SetTransparency(1);
+
+
 
         }
     }
