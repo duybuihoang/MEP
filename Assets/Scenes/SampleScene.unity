@@ -1367,7 +1367,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   image: {fileID: 1327067441}
   minTransparent: 0.5
-  fadeSpeed: 50
+  ResetTime: 0.3
 --- !u!1 &1327067439
 GameObject:
   m_ObjectHideFlags: 0
